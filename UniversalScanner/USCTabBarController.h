@@ -1,5 +1,5 @@
 //
-//  AppDelegate.h
+//  USCTabBarController.h
 //  UniversalScanner
 //
 //  Created by Andrey Butcitcyn on 31.07.2020.
@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+NS_ASSUME_NONNULL_BEGIN
 
-@property (nullable, nonatomic, strong) UIWindow *window;
-
+@interface USCTabBarController : UITabBarController
 
 @end
 
+NS_ASSUME_NONNULL_END

@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  USCScannerController.h
 //  UniversalScanner
 //
 //  Created by Andrey Butcitcyn on 31.07.2020.
@@ -8,8 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
+NS_ASSUME_NONNULL_BEGIN
 
+@interface USCScannerController : UIViewController
 
 @end
 
+
+
+NS_ASSUME_NONNULL_END

@@ -8,14 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		20D9AE8F24D45EC000DE6D7F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 20D9AE8E24D45EC000DE6D7F /* AppDelegate.m */; };
-		20D9AE9224D45EC000DE6D7F /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 20D9AE9124D45EC000DE6D7F /* SceneDelegate.m */; };
-		20D9AE9524D45EC000DE6D7F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20D9AE9424D45EC000DE6D7F /* ViewController.m */; };
-		20D9AE9824D45EC000DE6D7F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20D9AE9624D45EC000DE6D7F /* Main.storyboard */; };
 		20D9AE9A24D45EC400DE6D7F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20D9AE9924D45EC400DE6D7F /* Assets.xcassets */; };
 		20D9AE9D24D45EC400DE6D7F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20D9AE9B24D45EC400DE6D7F /* LaunchScreen.storyboard */; };
 		20D9AEA024D45EC400DE6D7F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 20D9AE9F24D45EC400DE6D7F /* main.m */; };
 		20D9AEAA24D45EC400DE6D7F /* UniversalScannerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 20D9AEA924D45EC400DE6D7F /* UniversalScannerTests.m */; };
 		20D9AEB524D45EC400DE6D7F /* UniversalScannerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 20D9AEB424D45EC400DE6D7F /* UniversalScannerUITests.m */; };
+		20D9AEC424D460A400DE6D7F /* USCTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20D9AEC324D460A400DE6D7F /* USCTabBarController.m */; };
+		20D9AECA24D4615700DE6D7F /* USCHistoryController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20D9AEC924D4615700DE6D7F /* USCHistoryController.m */; };
+		20D9AECE24D4617600DE6D7F /* USCScannerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20D9AECC24D4617600DE6D7F /* USCScannerController.m */; };
+		20D9AECF24D4617600DE6D7F /* USCScannerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 20D9AECD24D4617600DE6D7F /* USCScannerController.xib */; };
+		20D9AED224D466BE00DE6D7F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D9AED124D466BE00DE6D7F /* Foundation.framework */; };
+		20D9AED824D46C7300DE6D7F /* UIColor+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 20D9AED624D46C7300DE6D7F /* UIColor+Additions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,11 +42,6 @@
 		20D9AE8A24D45EC000DE6D7F /* UniversalScanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UniversalScanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20D9AE8D24D45EC000DE6D7F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		20D9AE8E24D45EC000DE6D7F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		20D9AE9024D45EC000DE6D7F /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
-		20D9AE9124D45EC000DE6D7F /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
-		20D9AE9324D45EC000DE6D7F /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		20D9AE9424D45EC000DE6D7F /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		20D9AE9724D45EC000DE6D7F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		20D9AE9924D45EC400DE6D7F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		20D9AE9C24D45EC400DE6D7F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		20D9AE9E24D45EC400DE6D7F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -54,6 +52,16 @@
 		20D9AEB024D45EC400DE6D7F /* UniversalScannerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UniversalScannerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		20D9AEB424D45EC400DE6D7F /* UniversalScannerUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UniversalScannerUITests.m; sourceTree = "<group>"; };
 		20D9AEB624D45EC400DE6D7F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		20D9AEC224D460A400DE6D7F /* USCTabBarController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = USCTabBarController.h; sourceTree = "<group>"; };
+		20D9AEC324D460A400DE6D7F /* USCTabBarController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = USCTabBarController.m; sourceTree = "<group>"; };
+		20D9AEC824D4615700DE6D7F /* USCHistoryController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = USCHistoryController.h; sourceTree = "<group>"; };
+		20D9AEC924D4615700DE6D7F /* USCHistoryController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = USCHistoryController.m; sourceTree = "<group>"; };
+		20D9AECB24D4617600DE6D7F /* USCScannerController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = USCScannerController.h; sourceTree = "<group>"; };
+		20D9AECC24D4617600DE6D7F /* USCScannerController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = USCScannerController.m; sourceTree = "<group>"; };
+		20D9AECD24D4617600DE6D7F /* USCScannerController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = USCScannerController.xib; sourceTree = "<group>"; };
+		20D9AED124D466BE00DE6D7F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		20D9AED624D46C7300DE6D7F /* UIColor+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+Additions.m"; path = "../../btctcn-IOS2020/RSTask6/Additions/UIColor+Additions.m"; sourceTree = "<group>"; };
+		20D9AED724D46C7300DE6D7F /* UIColor+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+Additions.h"; path = "../../btctcn-IOS2020/RSTask6/Additions/UIColor+Additions.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20D9AED224D466BE00DE6D7F /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,6 +97,7 @@
 				20D9AEA824D45EC400DE6D7F /* UniversalScannerTests */,
 				20D9AEB324D45EC400DE6D7F /* UniversalScannerUITests */,
 				20D9AE8B24D45EC000DE6D7F /* Products */,
+				20D9AED024D466BD00DE6D7F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -104,17 +114,21 @@
 		20D9AE8C24D45EC000DE6D7F /* UniversalScanner */ = {
 			isa = PBXGroup;
 			children = (
+				20D9AED724D46C7300DE6D7F /* UIColor+Additions.h */,
+				20D9AED624D46C7300DE6D7F /* UIColor+Additions.m */,
 				20D9AE8D24D45EC000DE6D7F /* AppDelegate.h */,
 				20D9AE8E24D45EC000DE6D7F /* AppDelegate.m */,
-				20D9AE9024D45EC000DE6D7F /* SceneDelegate.h */,
-				20D9AE9124D45EC000DE6D7F /* SceneDelegate.m */,
-				20D9AE9324D45EC000DE6D7F /* ViewController.h */,
-				20D9AE9424D45EC000DE6D7F /* ViewController.m */,
-				20D9AE9624D45EC000DE6D7F /* Main.storyboard */,
 				20D9AE9924D45EC400DE6D7F /* Assets.xcassets */,
 				20D9AE9B24D45EC400DE6D7F /* LaunchScreen.storyboard */,
 				20D9AE9E24D45EC400DE6D7F /* Info.plist */,
 				20D9AE9F24D45EC400DE6D7F /* main.m */,
+				20D9AEC224D460A400DE6D7F /* USCTabBarController.h */,
+				20D9AEC324D460A400DE6D7F /* USCTabBarController.m */,
+				20D9AEC824D4615700DE6D7F /* USCHistoryController.h */,
+				20D9AEC924D4615700DE6D7F /* USCHistoryController.m */,
+				20D9AECB24D4617600DE6D7F /* USCScannerController.h */,
+				20D9AECC24D4617600DE6D7F /* USCScannerController.m */,
+				20D9AECD24D4617600DE6D7F /* USCScannerController.xib */,
 			);
 			path = UniversalScanner;
 			sourceTree = "<group>";
@@ -135,6 +149,14 @@
 				20D9AEB624D45EC400DE6D7F /* Info.plist */,
 			);
 			path = UniversalScannerUITests;
+			sourceTree = "<group>";
+		};
+		20D9AED024D466BD00DE6D7F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				20D9AED124D466BE00DE6D7F /* Foundation.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -242,7 +264,7 @@
 			files = (
 				20D9AE9D24D45EC400DE6D7F /* LaunchScreen.storyboard in Resources */,
 				20D9AE9A24D45EC400DE6D7F /* Assets.xcassets in Resources */,
-				20D9AE9824D45EC000DE6D7F /* Main.storyboard in Resources */,
+				20D9AECF24D4617600DE6D7F /* USCScannerController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,10 +289,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				20D9AE9524D45EC000DE6D7F /* ViewController.m in Sources */,
+				20D9AECE24D4617600DE6D7F /* USCScannerController.m in Sources */,
+				20D9AEC424D460A400DE6D7F /* USCTabBarController.m in Sources */,
 				20D9AE8F24D45EC000DE6D7F /* AppDelegate.m in Sources */,
 				20D9AEA024D45EC400DE6D7F /* main.m in Sources */,
-				20D9AE9224D45EC000DE6D7F /* SceneDelegate.m in Sources */,
+				20D9AECA24D4615700DE6D7F /* USCHistoryController.m in Sources */,
+				20D9AED824D46C7300DE6D7F /* UIColor+Additions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -306,14 +330,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		20D9AE9624D45EC000DE6D7F /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				20D9AE9724D45EC000DE6D7F /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		20D9AE9B24D45EC400DE6D7F /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -375,7 +391,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -427,7 +443,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -442,6 +458,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Q2Q3Q59KE9;
 				INFOPLIST_FILE = UniversalScanner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -459,6 +476,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Q2Q3Q59KE9;
 				INFOPLIST_FILE = UniversalScanner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

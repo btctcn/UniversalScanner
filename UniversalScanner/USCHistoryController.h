@@ -1,5 +1,5 @@
 //
-//  SceneDelegate.h
+//  USCHistoryController.h
 //  UniversalScanner
 //
 //  Created by Andrey Butcitcyn on 31.07.2020.
@@ -8,9 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SceneDelegate : UIResponder <UIWindowSceneDelegate>
+NS_ASSUME_NONNULL_BEGIN
 
-@property (strong, nonatomic) UIWindow * window;
+@interface USCHistoryController : UITableViewController
 
 @end
 
+NS_ASSUME_NONNULL_END
