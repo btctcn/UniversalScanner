@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		20892B5724D5DE7C0028E151 /* USCCaptureButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 20892B5624D5DE7C0028E151 /* USCCaptureButton.m */; };
 		20D9AE8F24D45EC000DE6D7F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 20D9AE8E24D45EC000DE6D7F /* AppDelegate.m */; };
 		20D9AE9A24D45EC400DE6D7F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20D9AE9924D45EC400DE6D7F /* Assets.xcassets */; };
 		20D9AE9D24D45EC400DE6D7F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20D9AE9B24D45EC400DE6D7F /* LaunchScreen.storyboard */; };
@@ -17,7 +18,6 @@
 		20D9AECA24D4615700DE6D7F /* USCHistoryController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20D9AEC924D4615700DE6D7F /* USCHistoryController.m */; };
 		20D9AECE24D4617600DE6D7F /* USCScannerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20D9AECC24D4617600DE6D7F /* USCScannerController.m */; };
 		20D9AECF24D4617600DE6D7F /* USCScannerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 20D9AECD24D4617600DE6D7F /* USCScannerController.xib */; };
-		20D9AED224D466BE00DE6D7F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D9AED124D466BE00DE6D7F /* Foundation.framework */; };
 		20D9AED824D46C7300DE6D7F /* UIColor+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 20D9AED624D46C7300DE6D7F /* UIColor+Additions.m */; };
 /* End PBXBuildFile section */
 
@@ -39,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		20892B5524D5DE7C0028E151 /* USCCaptureButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = USCCaptureButton.h; sourceTree = "<group>"; };
+		20892B5624D5DE7C0028E151 /* USCCaptureButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = USCCaptureButton.m; sourceTree = "<group>"; };
 		20D9AE8A24D45EC000DE6D7F /* UniversalScanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UniversalScanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20D9AE8D24D45EC000DE6D7F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		20D9AE8E24D45EC000DE6D7F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -69,7 +71,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				20D9AED224D466BE00DE6D7F /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -129,6 +130,8 @@
 				20D9AECB24D4617600DE6D7F /* USCScannerController.h */,
 				20D9AECC24D4617600DE6D7F /* USCScannerController.m */,
 				20D9AECD24D4617600DE6D7F /* USCScannerController.xib */,
+				20892B5524D5DE7C0028E151 /* USCCaptureButton.h */,
+				20892B5624D5DE7C0028E151 /* USCCaptureButton.m */,
 			);
 			path = UniversalScanner;
 			sourceTree = "<group>";
@@ -169,6 +172,7 @@
 				20D9AE8624D45EC000DE6D7F /* Sources */,
 				20D9AE8724D45EC000DE6D7F /* Frameworks */,
 				20D9AE8824D45EC000DE6D7F /* Resources */,
+				20892B5424D49C760028E151 /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -284,11 +288,33 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		20892B5424D49C760028E151 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nexport REVEAL_SERVER_FILENAME=\"RevealServer.framework\"\n\n# Update this path to point to the location of RevealServer.framework in your project.\nexport REVEAL_SERVER_PATH=\"${SRCROOT}/${REVEAL_SERVER_FILENAME}\"\n\n# If configuration is not Debug, skip this script.\n[ \"${CONFIGURATION}\" != \"Debug\" ] && exit 0\n\n# If RevealServer.framework exists at the specified path, run code signing script.\nif [ -d \"${REVEAL_SERVER_PATH}\" ]; then\n  \"${REVEAL_SERVER_PATH}/Scripts/copy_and_codesign_revealserver.sh\"\nelse\n  echo \"Cannot find RevealServer.framework, so Reveal Server will not be started for your app.\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		20D9AE8624D45EC000DE6D7F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20892B5724D5DE7C0028E151 /* USCCaptureButton.m in Sources */,
 				20D9AECE24D4617600DE6D7F /* USCScannerController.m in Sources */,
 				20D9AEC424D460A400DE6D7F /* USCTabBarController.m in Sources */,
 				20D9AE8F24D45EC000DE6D7F /* AppDelegate.m in Sources */,
@@ -457,11 +483,20 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Q2Q3Q59KE9;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)",
+				);
 				INFOPLIST_FILE = UniversalScanner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-weak_framework",
+					RevealServer,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.btctcn.UniversalScanner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -475,11 +510,20 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Q2Q3Q59KE9;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)",
+				);
 				INFOPLIST_FILE = UniversalScanner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-weak_framework",
+					RevealServer,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.btctcn.UniversalScanner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
