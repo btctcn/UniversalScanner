@@ -10,7 +10,23 @@
 #import <AVKit/AVKit.h>
 #import <CoreVideo/CoreVideo.h>
 #import <CoreVideo/CVPixelBuffer.h>
-#import <VisionKit/VisionKit.h>
+#import <Vision/Vision.h>
+
+
+AVCaptureVideoOrientation avCaptureVideoOrientationFromUIDeviceOrientation(UIDeviceOrientation deviceOrientation){
+    switch (deviceOrientation) {
+        case UIDeviceOrientationPortrait:
+            return AVCaptureVideoOrientationPortrait;
+        case UIDeviceOrientationPortraitUpsideDown:
+            return AVCaptureVideoOrientationPortraitUpsideDown;
+        case UIDeviceOrientationLandscapeLeft:
+            return AVCaptureVideoOrientationLandscapeRight;
+        case UIDeviceOrientationLandscapeRight:
+            return AVCaptureVideoOrientationLandscapeLeft;
+        default:
+            return -1;
+    }
+}
 
 @interface USCScannerController ()
 
@@ -19,11 +35,6 @@ typedef NS_ENUM(NSInteger, USCScannerMode){
     USCCodeMode
 };
 
-@property (nonatomic, strong) AVCaptureSession *session;
-@property (nonatomic, strong) AVCaptureDeviceInput *input;
-@property (nonatomic, strong) AVCaptureDevice *device;
-@property (nonatomic, strong) AVCaptureMetadataOutput *output;
-@property (nonatomic, strong) AVCaptureVideoPreviewLayer *previewLayer;
 @property (nonatomic, strong) CAShapeLayer *drawLayer;
 @property (nonatomic, strong) NSArray *rectangle;
 @property (nonatomic, readonly) USCScannerMode scannerMode;
@@ -31,6 +42,24 @@ typedef NS_ENUM(NSInteger, USCScannerMode){
 @property (nonatomic, strong) NSValue *bounds;
 @property (nonatomic, copy) NSString *currentQrOrBarCode;
 @property (nonatomic, copy) NSString *currentTextualCode;
+
+@property (nonatomic, strong) dispatch_queue_t captureSessionQueue;
+@property (nonatomic, strong) dispatch_queue_t videoDataOutputQueue;
+@property (nonatomic, strong) CAShapeLayer *maskLayer;
+@property (nonatomic, assign) UIDeviceOrientation currentOrientation;
+@property (nonatomic, assign) CGAffineTransform bottomToTopTransform;
+@property (nonatomic, assign) CGAffineTransform uiRotationTransform;
+@property (nonatomic, assign) CGRect regionOfInterest;
+@property (nonatomic, assign) double bufferAspectRatio;
+@property (nonatomic, assign) CGAffineTransform roiToGlobalTransform;
+@property (nonatomic, assign) CGImagePropertyOrientation textOrientation;
+@property (nonatomic, assign) CGAffineTransform visionToAVFTransform;
+@property (nonatomic, strong) AVCaptureDevice *captureDevice;
+@property (nonatomic, strong) AVCaptureSession *captureSession;
+@property (nonatomic, strong) AVCaptureVideoDataOutput *videoDataOutput;
+@property (nonatomic, strong) AVCaptureMetadataOutput *metadataOutput;
+@property (nonatomic, strong) VNRecognizeTextRequest *request;
+
 @end
 
 @implementation USCScannerController
@@ -47,6 +76,38 @@ typedef NS_ENUM(NSInteger, USCScannerMode){
 - (void)viewDidLoad{
     [super viewDidLoad];
     
+    self.captureSessionQueue = dispatch_queue_create("CaptureSessionQueue", nil);
+    self.videoDataOutputQueue = dispatch_queue_create("VideoDataOutputQueue", nil);
+    self.cutoutView.backgroundColor = [UIColor.grayColor colorWithAlphaComponent:0.5];
+    self.maskLayer = [CAShapeLayer new];
+    self.maskLayer.backgroundColor = UIColor.clearColor.CGColor;
+    self.maskLayer.fillRule = kCAFillRuleEvenOdd;
+    self.cutoutView.layer.mask = self.maskLayer;
+    self.bottomToTopTransform = CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, -1);
+    self.uiRotationTransform = CGAffineTransformIdentity;
+    self.regionOfInterest = CGRectMake(0, 0, 1, 1);
+    self.roiToGlobalTransform = CGAffineTransformIdentity;
+    self.textOrientation = kCGImagePropertyOrientationUp;
+    self.visionToAVFTransform = CGAffineTransformIdentity;
+    self.captureSession = [AVCaptureSession new];
+    self.videoDataOutput = [AVCaptureVideoDataOutput new];
+    self.metadataOutput = [AVCaptureMetadataOutput new];
+    UITapGestureRecognizer *tapGestureRecognizer = [UITapGestureRecognizer new];
+    [tapGestureRecognizer addTarget:self action:@selector(handleTap)];
+    [self.numberView addGestureRecognizer:tapGestureRecognizer];
+    self.request = [[VNRecognizeTextRequest alloc]initWithCompletionHandler:^(VNRequest * _Nonnull request, NSError * _Nullable error) {
+        [self recognizeTextHandler:request error:error];
+    }];
+    self.previewView.session = self.captureSession;
+    
+    dispatch_async(self.captureSessionQueue, ^{
+        [self setupCamera];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self calculateRegionOfInterest];
+        });
+    });
+    
+    //init capture button
     UITapGestureRecognizer *tapRecognizer = [UITapGestureRecognizer new];
     tapRecognizer.delegate = self;
     [tapRecognizer addTarget:self action:@selector(captureButtonTapped)];
@@ -56,7 +117,180 @@ typedef NS_ENUM(NSInteger, USCScannerMode){
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator{
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
     
+    UIDeviceOrientation deviceOrientation = UIDevice.currentDevice.orientation;
+    if(UIDeviceOrientationIsPortrait(deviceOrientation) || UIDeviceOrientationIsLandscape(deviceOrientation)){
+        self.currentOrientation = deviceOrientation;
+    }
     
+    AVCaptureVideoOrientation newOrientation = avCaptureVideoOrientationFromUIDeviceOrientation(deviceOrientation);
+    if(newOrientation >= AVCaptureVideoOrientationPortrait){
+        self.previewView.videoPreviewLayer.connection.videoOrientation = newOrientation;
+    }
+    
+    [self calculateRegionOfInterest];
+}
+
+- (void)viewDidLayoutSubviews{
+    [super viewDidLayoutSubviews];
+    [self updateCutout];
+}
+
+-(void)updateCutout{
+    CGAffineTransform roiRectTransform = CGAffineTransformConcat(self.bottomToTopTransform, self.uiRotationTransform);
+    CGRect cutout = [self.previewView.videoPreviewLayer rectForMetadataOutputRectOfInterest:CGRectApplyAffineTransform(self.regionOfInterest, roiRectTransform)];
+    
+    UIBezierPath *path = [UIBezierPath bezierPathWithRect:self.cutoutView.frame];
+    [path appendPath:[UIBezierPath bezierPathWithRect:cutout]];
+    self.maskLayer.path = path.CGPath;
+    
+    CGRect numFrame = cutout;
+    numFrame.origin.y += numFrame.size.height;
+    self.numberView.frame = numFrame;
+}
+
+- (void) setupCamera{
+    AVCaptureDevice *captureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    if(!captureDevice) {
+        NSLog(@"Could not create capture device.");
+        return;
+    }
+    self.captureDevice = captureDevice;
+    if([captureDevice supportsAVCaptureSessionPreset:AVCaptureSessionPreset3840x2160]){
+        self.captureSession.sessionPreset = AVCaptureSessionPreset3840x2160;
+        self.bufferAspectRatio = 3840.0 / 2160.0;
+    }
+    else{
+        self.captureSession.sessionPreset = AVCaptureSessionPreset1920x1080;
+        self.bufferAspectRatio = 1920.0 / 1080.0;
+    }
+    
+    AVCaptureDeviceInput *deviceInput = [AVCaptureDeviceInput deviceInputWithDevice:captureDevice error:nil];
+    if(!deviceInput){
+        NSLog(@"Could not create device input.");
+        return;
+    }
+    
+    if([self.captureSession canAddInput:deviceInput]){
+        [self.captureSession addInput:deviceInput];
+    }
+    
+    self.videoDataOutput.alwaysDiscardsLateVideoFrames = YES;
+    [self.videoDataOutput setSampleBufferDelegate:self queue:self.videoDataOutputQueue];
+    self.videoDataOutput.videoSettings = @{(NSString*)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)};
+    if([self.captureSession canAddOutput:self.videoDataOutput]){
+        [self.captureSession addOutput:self.videoDataOutput];
+        [self.videoDataOutput connectionWithMediaType:AVMediaTypeVideo].preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeOff;
+    } else {
+        NSLog(@"Could not add VDO output");
+        return;
+    }
+    
+    [self.metadataOutput setMetadataObjectsDelegate:self queue:self.videoDataOutputQueue];
+    
+    if([self.captureSession canAddOutput:self.metadataOutput]){
+        [self.captureSession addOutput:self.metadataOutput];
+        //[self.metadataOutput connectionWithMediaType:AVMediaTypeVideo].preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeOff;
+        self.metadataOutput.metadataObjectTypes = @[AVMetadataObjectTypeUPCECode,
+                                            AVMetadataObjectTypeCode39Code,
+                                            AVMetadataObjectTypeCode39Mod43Code,
+                                            AVMetadataObjectTypeEAN13Code,
+                                            AVMetadataObjectTypeEAN8Code,
+                                            AVMetadataObjectTypeCode93Code,
+                                            AVMetadataObjectTypeCode128Code,
+                                            AVMetadataObjectTypePDF417Code,
+                                            AVMetadataObjectTypeQRCode,
+                                            AVMetadataObjectTypeAztecCode,
+                                            AVMetadataObjectTypeInterleaved2of5Code,
+                                            AVMetadataObjectTypeITF14Code,
+                                            AVMetadataObjectTypeDataMatrixCode
+        ];
+    } else {
+        NSLog(@"Could not add metadata output");
+        return;
+    }
+    
+    @try {
+        [self.captureDevice lockForConfiguration:nil];
+        self.captureDevice.videoZoomFactor = 2;
+        self.captureDevice.autoFocusRangeRestriction = AVCaptureAutoFocusRangeRestrictionNear;
+        [self.captureDevice unlockForConfiguration];
+    } @catch (NSException *exception) {
+        NSLog(@"Could not set zoom level due to error %@", exception);
+    }
+    
+    [self.captureSession startRunning];
+}
+
+-(void)showString:(NSString *)string{
+    dispatch_sync(self.captureSessionQueue, ^{
+        [self.captureSession stopRunning];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.numberView.text = string;
+            self.numberView.hidden = NO;
+        });
+    });
+}
+
+-(void)handleTap{
+    dispatch_async(self.captureSessionQueue, ^{
+        if(!self.captureSession.isRunning){
+            [self.captureSession startRunning];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.numberView.hidden = YES;
+        });
+    });
+}
+
+-(void) calculateRegionOfInterest{
+    CGFloat desiredHeightRatio = 0.15;
+    CGFloat desiredWidthRatio = 0.6;
+    CGFloat maxPortraitWidth = 0.8;
+    
+    CGSize size;
+    
+    if(UIDeviceOrientationIsPortrait(self.currentOrientation) || self.currentOrientation == UIDeviceOrientationUnknown){
+        size = CGSizeMake(MIN(desiredWidthRatio * self.bufferAspectRatio, maxPortraitWidth), desiredHeightRatio / self.bufferAspectRatio);
+    }
+    else{
+        size = CGSizeMake(desiredWidthRatio, desiredHeightRatio);
+    }
+    
+    CGRect rect = {CGPointMake((1 - size.width) / 2, (1 - size.height) / 2), size};
+    self.regionOfInterest = rect;
+    
+    [self setupOrientationAndTransform];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self updateCutout];
+    });
+}
+
+- (void) setupOrientationAndTransform{
+    CGRect roi = self.regionOfInterest;
+    
+    self.roiToGlobalTransform = CGAffineTransformScale(CGAffineTransformMakeTranslation(roi.origin.x, roi.origin.y), roi.size.width, roi.size.height);
+    
+    switch (self.currentOrientation) {
+        case UIDeviceOrientationLandscapeLeft:
+            self.textOrientation = kCGImagePropertyOrientationUp;
+            self.uiRotationTransform = CGAffineTransformIdentity;
+            break;
+        case UIDeviceOrientationLandscapeRight:
+            self.textOrientation = kCGImagePropertyOrientationDown;
+            self.uiRotationTransform = CGAffineTransformRotate(CGAffineTransformMakeTranslation(1,1), M_PI);
+            break;
+        case UIDeviceOrientationPortraitUpsideDown:
+            self.textOrientation = kCGImagePropertyOrientationLeft;
+            self.uiRotationTransform = CGAffineTransformRotate(CGAffineTransformMakeTranslation(1,0), M_PI/2);
+            break;
+        default:
+            self.textOrientation = kCGImagePropertyOrientationRight;
+            self.uiRotationTransform = CGAffineTransformRotate(CGAffineTransformMakeTranslation(0,1), -M_PI/2);
+            break;
+    }
+    
+    self.visionToAVFTransform = CGAffineTransformConcat(CGAffineTransformConcat(self.roiToGlobalTransform, self.bottomToTopTransform), self.uiRotationTransform);
 }
 
 -(void)captureButtonTapped{
@@ -70,17 +304,17 @@ typedef NS_ENUM(NSInteger, USCScannerMode){
         //save self.currentQrOrBarCode
     }
     else{
-//        UIGraphicsBeginImageContext(CGSizeMake(self.view.frame.size.width, self.view.frame.size.height));
-//        [self.view drawViewHierarchyInRect:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) afterScreenUpdates:NO];
-//        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-//        UIGraphicsEndImageContext();
+        //        UIGraphicsBeginImageContext(CGSizeMake(self.view.frame.size.width, self.view.frame.size.height));
+        //        [self.view drawViewHierarchyInRect:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) afterScreenUpdates:NO];
+        //        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+        //        UIGraphicsEndImageContext();
         
         if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
             UIGraphicsBeginImageContextWithOptions(UIApplication.sharedApplication.windows[0].bounds.size, NO, [UIScreen mainScreen].scale);
         } else {
             UIGraphicsBeginImageContext(UIApplication.sharedApplication.windows[0].bounds.size);
         }
-
+        
         [UIApplication.sharedApplication.windows[0].layer renderInContext:UIGraphicsGetCurrentContext()];
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
@@ -91,7 +325,7 @@ typedef NS_ENUM(NSInteger, USCScannerMode){
                                                   options:@{CIDetectorAccuracy:CIDetectorAccuracyLow,
                                                             CIDetectorTracking:@YES,
                                                             CIDetectorMinFeatureSize:@.5f}];
-
+        
         NSArray<CIRectangleFeature *> *rectangleFeatures = (NSArray<CIRectangleFeature *> *)[detector featuresInImage:ciImage];
         for (CIRectangleFeature *rect in rectangleFeatures)
         {
@@ -103,7 +337,7 @@ typedef NS_ENUM(NSInteger, USCScannerMode){
                 CIImage *cardImage = [ciImage imageByCroppingToRect:rect.bounds]; //or create a custom rect to crop if it's not good.
                 CGRect greenRect = CGRectMake(0, rect.bounds.size.height * 0.8, rect.bounds.size.width, rect.bounds.size.height * 0.2); //in image coordinates
                 CIImage *greenRectCIImage = [cardImage imageByCroppingToRect:greenRect];
-
+                
                 UIImage *greenRectImage = [[UIImage alloc] initWithCIImage:greenRectCIImage];
                 //use greenRectImage for OCR
                 return;
@@ -113,64 +347,6 @@ typedef NS_ENUM(NSInteger, USCScannerMode){
     }
 }
 
-- (void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
-    if(!self.isScannerInitialized){
-        [self setupScanner];
-        [self.session startRunning];
-        self.isScannerInitialized = YES;
-    }
-}
-
-- (void) setupScanner;
-{
-    self.device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-    self.input = [AVCaptureDeviceInput deviceInputWithDevice:self.device error:nil];
-    self.session = [[AVCaptureSession alloc] init];
-    self.output = [[AVCaptureMetadataOutput alloc] init];
-    [self.session addOutput:self.output];
-    [self.session addInput:self.input];
-    
-    
-//    AVCaptureVideoDataOutput *videoOutput = [[AVCaptureVideoDataOutput alloc] init];
-//    videoOutput.videoSettings = @{ (NSString *)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA) };
-//    [self.session addOutput:videoOutput];
-    //[videoOutput setSampleBufferDelegate:self queue:dispatch_get_main_queue()];
-    
-    [self.output setMetadataObjectsDelegate:self queue:dispatch_get_main_queue()];
-    self.output.metadataObjectTypes = @[AVMetadataObjectTypeUPCECode,
-                                        AVMetadataObjectTypeCode39Code,
-                                        AVMetadataObjectTypeCode39Mod43Code,
-                                        AVMetadataObjectTypeEAN13Code,
-                                        AVMetadataObjectTypeEAN8Code,
-                                        AVMetadataObjectTypeCode93Code,
-                                        AVMetadataObjectTypeCode128Code,
-                                        AVMetadataObjectTypePDF417Code,
-                                        AVMetadataObjectTypeQRCode,
-                                        AVMetadataObjectTypeAztecCode,
-                                        AVMetadataObjectTypeInterleaved2of5Code,
-                                        AVMetadataObjectTypeITF14Code,
-                                        AVMetadataObjectTypeDataMatrixCode
-    ];
-    
-    self.previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.session];
-    self.previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
-    self.previewLayer.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
-    
-    AVCaptureConnection *con = self.previewLayer.connection;
-    con.videoOrientation = AVCaptureVideoOrientationPortrait;
-    [self.view.layer insertSublayer:self.previewLayer atIndex:0];
-    self.drawLayer = [CAShapeLayer layer];
-    CGRect parentBox = [self.previewLayer frame];
-    [self.drawLayer setFrame:parentBox];
-    [self.drawLayer setDelegate:self];
-    [self.drawLayer setNeedsDisplay];
-    [self.previewLayer addSublayer:self.drawLayer];
-}
-
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations{
-    return UIInterfaceOrientationMaskPortrait;
-}
 
 -(USCScannerMode)scannerMode{
     return self.segmentedControl.selectedSegmentIndex == 0 ? USCQRAndBarMode : USCCodeMode;
@@ -196,35 +372,37 @@ typedef NS_ENUM(NSInteger, USCScannerMode){
 
 #pragma mark AVCaptureMetadataOutputObjectsDelegate
 - (void)captureOutput:(AVCaptureOutput *)output didOutputMetadataObjects:(NSArray<__kindof AVMetadataObject *> *)metadataObjects fromConnection:(AVCaptureConnection *)connection{
-    if(metadataObjects.count > 0){
-        AVMetadataMachineReadableCodeObject *ro = (AVMetadataMachineReadableCodeObject*)[self.previewLayer transformedMetadataObjectForMetadataObject:metadataObjects[0]];
-        self.bounds = [NSValue valueWithCGRect:ro.bounds];
-        CGPoint p0;
-        CGPointMakeWithDictionaryRepresentation((__bridge CFDictionaryRef)ro.corners[0], &p0);
-        CGPoint p1;
-        CGPointMakeWithDictionaryRepresentation((__bridge CFDictionaryRef)ro.corners[1], &p1);
-        CGPoint p2;
-        CGPointMakeWithDictionaryRepresentation((__bridge CFDictionaryRef)ro.corners[2], &p2);
-        CGPoint p3;
-        CGPointMakeWithDictionaryRepresentation((__bridge CFDictionaryRef)ro.corners[3], &p3);
-        self.rectangle = @[[NSValue valueWithCGPoint:p0],
-                           [NSValue valueWithCGPoint:p1],
-                           [NSValue valueWithCGPoint:p2],
-                           [NSValue valueWithCGPoint:p3]];
-        
-        if(self.scannerMode == USCQRAndBarMode){
-            [self.captureButton setTitle:@"Take" forState:UIControlStateNormal];
-            self.captureButton.userInteractionEnabled = YES;
-            self.currentQrOrBarCode = ro.stringValue;
-        }
-    }
-    else{
-        self.rectangle = nil;
-        [self.captureButton setTitle:@"" forState:UIControlStateNormal];
-        self.captureButton.userInteractionEnabled = NO;
-    }
-    
-    [self.drawLayer setNeedsDisplay];
+    if(metadataObjects.count > 0)
+        NSLog(@"AVCaptureMetadataOutputObjectsDelegate");
+//    if(metadataObjects.count > 0){
+//        AVMetadataMachineReadableCodeObject *ro = (AVMetadataMachineReadableCodeObject*)[self.previewLayer transformedMetadataObjectForMetadataObject:metadataObjects[0]];
+//        self.bounds = [NSValue valueWithCGRect:ro.bounds];
+//        CGPoint p0;
+//        CGPointMakeWithDictionaryRepresentation((__bridge CFDictionaryRef)ro.corners[0], &p0);
+//        CGPoint p1;
+//        CGPointMakeWithDictionaryRepresentation((__bridge CFDictionaryRef)ro.corners[1], &p1);
+//        CGPoint p2;
+//        CGPointMakeWithDictionaryRepresentation((__bridge CFDictionaryRef)ro.corners[2], &p2);
+//        CGPoint p3;
+//        CGPointMakeWithDictionaryRepresentation((__bridge CFDictionaryRef)ro.corners[3], &p3);
+//        self.rectangle = @[[NSValue valueWithCGPoint:p0],
+//                           [NSValue valueWithCGPoint:p1],
+//                           [NSValue valueWithCGPoint:p2],
+//                           [NSValue valueWithCGPoint:p3]];
+//
+//        if(self.scannerMode == USCQRAndBarMode){
+//            [self.captureButton setTitle:@"Take" forState:UIControlStateNormal];
+//            self.captureButton.userInteractionEnabled = YES;
+//            self.currentQrOrBarCode = ro.stringValue;
+//        }
+//    }
+//    else{
+//        self.rectangle = nil;
+//        [self.captureButton setTitle:@"" forState:UIControlStateNormal];
+//        self.captureButton.userInteractionEnabled = NO;
+//    }
+//
+//    [self.drawLayer setNeedsDisplay];
 }
 
 #pragma mark CALayerDelegate
@@ -285,28 +463,25 @@ typedef NS_ENUM(NSInteger, USCScannerMode){
     CGContextDrawPath(ctx, kCGPathStroke);
 }
 
-#pragma mark AVCaptureAudioDataOutputSampleBufferDelegate
-
-- (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection {
-
-//    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-//    CIImage *image = [CIImage imageWithCVImageBuffer:imageBuffer options:nil];
-//    UIImage *uiImage = [UIImage imageWithCIImage:image];
-//    CIContext *context = [CIContext contextWithOptions:nil];
-//    CGImageRef ref = [context createCGImage:image fromRect:image.extent];
-//
-//    UIImage * portraitImage = [[UIImage alloc] initWithCGImage: ref
-//          scale: 1.0
-//    orientation: UIImageOrientationRight];
-//    CFRelease(ref);
-////
-////    self.image.image = portraitImage;
-//    self.image.image = portraitImage;
+#pragma mark AVCaptureVideoDataOutputSampleBufferDelegate
+- (void)captureOutput:(AVCaptureOutput *)output didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection{
+    CVImageBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+    self.request.recognitionLevel = VNRequestTextRecognitionLevelFast;
+    self.request.usesLanguageCorrection = NO;
+    self.request.regionOfInterest = self.regionOfInterest;
+    VNImageRequestHandler *requestHandler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:pixelBuffer orientation:self.textOrientation options:@{}];
+    @try {
+        [requestHandler performRequests:@[self.request] error:nil];
+    } @catch (NSException *exception) {
+        NSLog(@"%@", exception);
+    }
 }
 
-- (IBAction)scanTextTouchUpInside:(id)sender {
-    VNDocumentCameraViewController *vc = [[VNDocumentCameraViewController alloc]init];
-    vc.delegate = self;
-    [self presentViewController:vc animated:YES completion:nil];
+-(void) recognizeTextHandler:(VNRequest * _Nonnull)request error:(NSError * _Nullable) error{
+    if(request.results.count > 0){
+    NSLog(@"recognizeTextHandler %@", request.results);
+    }
 }
 @end
+
+

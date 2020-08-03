@@ -10,7 +10,9 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="USCScannerController">
             <connections>
                 <outlet property="captureButton" destination="Zsa-ij-ojm" id="mxP-Wu-Xum"/>
-                <outlet property="image" destination="67K-VV-uw8" id="ZwX-Nt-Ngu"/>
+                <outlet property="cutoutView" destination="Bpm-A9-UF8" id="haV-3y-RNd"/>
+                <outlet property="numberView" destination="aVw-oB-X6B" id="jEu-ss-6i1"/>
+                <outlet property="previewView" destination="By1-le-dH6" id="lv6-0Y-D1b"/>
                 <outlet property="segmentedControl" destination="FPO-13-gYd" id="Xz2-bb-0pS"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -20,9 +22,21 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="67K-VV-uw8">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="By1-le-dH6" customClass="USCPreviewView">
                     <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                </imageView>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bpm-A9-UF8" userLabel="cutoutView">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                </view>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aVw-oB-X6B" userLabel="numberView">
+                    <rect key="frame" x="111" y="437" width="192" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="FPO-13-gYd">
                     <rect key="frame" x="132.5" y="97" width="149" height="32"/>
                     <segments>
@@ -41,24 +55,20 @@
                         <constraint firstAttribute="height" constant="80" id="pbp-dL-2Sk"/>
                     </constraints>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MrQ-Lw-PBs">
-                    <rect key="frame" x="271" y="690" width="65" height="30"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <state key="normal" title="Scan text"/>
-                    <connections>
-                        <action selector="scanTextTouchUpInside:" destination="-1" eventType="touchUpInside" id="Gsr-1C-p3M"/>
-                    </connections>
-                </button>
             </subviews>
             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
             <constraints>
-                <constraint firstItem="67K-VV-uw8" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="7PW-ut-XZu"/>
-                <constraint firstAttribute="trailing" secondItem="67K-VV-uw8" secondAttribute="trailing" id="CYK-wp-cyq"/>
-                <constraint firstItem="67K-VV-uw8" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="UTD-5Q-gd9"/>
-                <constraint firstAttribute="bottom" secondItem="67K-VV-uw8" secondAttribute="bottom" id="WSD-WB-TFg"/>
+                <constraint firstAttribute="trailing" secondItem="By1-le-dH6" secondAttribute="trailing" id="0kV-b0-SKI"/>
+                <constraint firstItem="By1-le-dH6" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="OkF-2a-SpB"/>
+                <constraint firstItem="Bpm-A9-UF8" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="VhR-ZV-6eu"/>
+                <constraint firstItem="By1-le-dH6" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="ZzA-Kb-7Nu"/>
+                <constraint firstAttribute="trailing" secondItem="Bpm-A9-UF8" secondAttribute="trailing" id="f9w-gd-6Hg"/>
                 <constraint firstItem="FPO-13-gYd" firstAttribute="top" secondItem="Q5M-cg-NOt" secondAttribute="top" constant="53" id="h9Z-Y0-XoC"/>
                 <constraint firstItem="Zsa-ij-ojm" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="iNj-7y-cpt"/>
+                <constraint firstAttribute="bottom" secondItem="By1-le-dH6" secondAttribute="bottom" id="kVk-mt-SA7"/>
                 <constraint firstItem="FPO-13-gYd" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="mDp-ty-5Tv"/>
+                <constraint firstAttribute="bottom" secondItem="Bpm-A9-UF8" secondAttribute="bottom" id="mcS-M7-xrk"/>
+                <constraint firstItem="Bpm-A9-UF8" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="q5e-9h-c4t"/>
                 <constraint firstItem="Q5M-cg-NOt" firstAttribute="bottom" secondItem="Zsa-ij-ojm" secondAttribute="bottom" constant="53" id="ypd-5A-Edc"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="Q5M-cg-NOt"/>

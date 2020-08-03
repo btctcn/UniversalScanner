@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		206E377B24D7555100AFD92E /* USCPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 206E377A24D7555100AFD92E /* USCPreviewView.m */; };
 		20892B5724D5DE7C0028E151 /* USCCaptureButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 20892B5624D5DE7C0028E151 /* USCCaptureButton.m */; };
 		20D9AE8F24D45EC000DE6D7F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 20D9AE8E24D45EC000DE6D7F /* AppDelegate.m */; };
 		20D9AE9A24D45EC400DE6D7F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20D9AE9924D45EC400DE6D7F /* Assets.xcassets */; };
@@ -39,6 +40,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		206E377924D7555100AFD92E /* USCPreviewView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = USCPreviewView.h; sourceTree = "<group>"; };
+		206E377A24D7555100AFD92E /* USCPreviewView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = USCPreviewView.m; sourceTree = "<group>"; };
 		20892B5524D5DE7C0028E151 /* USCCaptureButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = USCCaptureButton.h; sourceTree = "<group>"; };
 		20892B5624D5DE7C0028E151 /* USCCaptureButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = USCCaptureButton.m; sourceTree = "<group>"; };
 		20D9AE8A24D45EC000DE6D7F /* UniversalScanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UniversalScanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -132,6 +135,8 @@
 				20D9AECD24D4617600DE6D7F /* USCScannerController.xib */,
 				20892B5524D5DE7C0028E151 /* USCCaptureButton.h */,
 				20892B5624D5DE7C0028E151 /* USCCaptureButton.m */,
+				206E377924D7555100AFD92E /* USCPreviewView.h */,
+				206E377A24D7555100AFD92E /* USCPreviewView.m */,
 			);
 			path = UniversalScanner;
 			sourceTree = "<group>";
@@ -317,6 +322,7 @@
 				20892B5724D5DE7C0028E151 /* USCCaptureButton.m in Sources */,
 				20D9AECE24D4617600DE6D7F /* USCScannerController.m in Sources */,
 				20D9AEC424D460A400DE6D7F /* USCTabBarController.m in Sources */,
+				206E377B24D7555100AFD92E /* USCPreviewView.m in Sources */,
 				20D9AE8F24D45EC000DE6D7F /* AppDelegate.m in Sources */,
 				20D9AEA024D45EC400DE6D7F /* main.m in Sources */,
 				20D9AECA24D4615700DE6D7F /* USCHistoryController.m in Sources */,
