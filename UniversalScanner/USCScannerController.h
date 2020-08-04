@@ -10,6 +10,7 @@
 #import <AVKit/AVKit.h>
 #import "USCCaptureButton.h"
 #import "USCPreviewView.h"
+#import "USCDataService.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,12 +18,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (IBAction)segmentedControlValueChanged:(id)sender;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
 @property (weak, nonatomic) IBOutlet USCCaptureButton *captureButton;
-- (IBAction)cqptureButtonTouchUpInside:(id)sender;
-@property (weak, nonatomic) IBOutlet UIImageView *image;
-- (IBAction)scanTextTouchUpInside:(id)sender;
 @property (weak, nonatomic) IBOutlet USCPreviewView *previewView;
 @property (weak, nonatomic) IBOutlet UIView *cutoutView;
 @property (weak, nonatomic) IBOutlet UILabel *numberView;
+
+- (instancetype)initWithDataService:(id<USCDataService>)dataService;
 
 @end
 

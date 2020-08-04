@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) AVCaptureVideoPreviewLayer *videoPreviewLayer;
 @property (nonatomic, strong) AVCaptureSession *session;
+@property (nonatomic, readonly) CAShapeLayer *drawLayer;
 
 @end
 

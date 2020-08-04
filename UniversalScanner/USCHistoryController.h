@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "USCDataService.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface USCHistoryController : UITableViewController
+@interface USCHistoryController : UITableViewController <USCDataService>
 
 @end
 

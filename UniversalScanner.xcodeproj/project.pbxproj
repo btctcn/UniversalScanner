@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		206E377B24D7555100AFD92E /* USCPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 206E377A24D7555100AFD92E /* USCPreviewView.m */; };
+		206E378424D8D30900AFD92E /* USCHistoryTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 206E378224D8D30800AFD92E /* USCHistoryTableViewCell.m */; };
+		206E378524D8D30900AFD92E /* USCHistoryTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 206E378324D8D30800AFD92E /* USCHistoryTableViewCell.xib */; };
 		20892B5724D5DE7C0028E151 /* USCCaptureButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 20892B5624D5DE7C0028E151 /* USCCaptureButton.m */; };
 		20D9AE8F24D45EC000DE6D7F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 20D9AE8E24D45EC000DE6D7F /* AppDelegate.m */; };
 		20D9AE9A24D45EC400DE6D7F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20D9AE9924D45EC400DE6D7F /* Assets.xcassets */; };
@@ -42,6 +44,10 @@
 /* Begin PBXFileReference section */
 		206E377924D7555100AFD92E /* USCPreviewView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = USCPreviewView.h; sourceTree = "<group>"; };
 		206E377A24D7555100AFD92E /* USCPreviewView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = USCPreviewView.m; sourceTree = "<group>"; };
+		206E378024D8CFB800AFD92E /* USCDataService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = USCDataService.h; sourceTree = "<group>"; };
+		206E378124D8D30800AFD92E /* USCHistoryTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = USCHistoryTableViewCell.h; sourceTree = "<group>"; };
+		206E378224D8D30800AFD92E /* USCHistoryTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = USCHistoryTableViewCell.m; sourceTree = "<group>"; };
+		206E378324D8D30800AFD92E /* USCHistoryTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = USCHistoryTableViewCell.xib; sourceTree = "<group>"; };
 		20892B5524D5DE7C0028E151 /* USCCaptureButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = USCCaptureButton.h; sourceTree = "<group>"; };
 		20892B5624D5DE7C0028E151 /* USCCaptureButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = USCCaptureButton.m; sourceTree = "<group>"; };
 		20D9AE8A24D45EC000DE6D7F /* UniversalScanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UniversalScanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -137,6 +143,10 @@
 				20892B5624D5DE7C0028E151 /* USCCaptureButton.m */,
 				206E377924D7555100AFD92E /* USCPreviewView.h */,
 				206E377A24D7555100AFD92E /* USCPreviewView.m */,
+				206E378024D8CFB800AFD92E /* USCDataService.h */,
+				206E378124D8D30800AFD92E /* USCHistoryTableViewCell.h */,
+				206E378224D8D30800AFD92E /* USCHistoryTableViewCell.m */,
+				206E378324D8D30800AFD92E /* USCHistoryTableViewCell.xib */,
 			);
 			path = UniversalScanner;
 			sourceTree = "<group>";
@@ -271,6 +281,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				206E378524D8D30900AFD92E /* USCHistoryTableViewCell.xib in Resources */,
 				20D9AE9D24D45EC400DE6D7F /* LaunchScreen.storyboard in Resources */,
 				20D9AE9A24D45EC400DE6D7F /* Assets.xcassets in Resources */,
 				20D9AECF24D4617600DE6D7F /* USCScannerController.xib in Resources */,
@@ -321,6 +332,7 @@
 			files = (
 				20892B5724D5DE7C0028E151 /* USCCaptureButton.m in Sources */,
 				20D9AECE24D4617600DE6D7F /* USCScannerController.m in Sources */,
+				206E378424D8D30900AFD92E /* USCHistoryTableViewCell.m in Sources */,
 				20D9AEC424D460A400DE6D7F /* USCTabBarController.m in Sources */,
 				206E377B24D7555100AFD92E /* USCPreviewView.m in Sources */,
 				20D9AE8F24D45EC000DE6D7F /* AppDelegate.m in Sources */,

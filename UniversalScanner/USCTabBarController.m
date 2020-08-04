@@ -18,18 +18,19 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    USCHistoryController *historyController = [USCHistoryController new];
+    USCScannerController *scannerController = [[USCScannerController alloc] initWithDataService:historyController];
     self.viewControllers = @[
-        [USCScannerController new],
-        [USCHistoryController new]
+        scannerController,
+        historyController
     ];
     
     self.selectedIndex = 0;
 }
 
-//- (UIInterfaceOrientationMask)supportedInterfaceOrientations{
-//    return UIInterfaceOrientationMaskPortrait;
-//}
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations{
+    return UIInterfaceOrientationMaskPortrait;
+}
 
 
 @end
