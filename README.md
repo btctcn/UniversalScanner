@@ -52,3 +52,7 @@ UniversalScanner/
 ├── USCHistoryTableViewCell.*    — table cell (nib-based)
 └── UIColor+Additions.{h,m}      — UIColor(Additions) category (fromHex:), used for the tab bar tint
 ```
+
+## License
+
+[MIT](LICENSE)
