@@ -71,8 +71,8 @@
 		20D9AECC24D4617600DE6D7F /* USCScannerController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = USCScannerController.m; sourceTree = "<group>"; };
 		20D9AECD24D4617600DE6D7F /* USCScannerController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = USCScannerController.xib; sourceTree = "<group>"; };
 		20D9AED124D466BE00DE6D7F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		20D9AED624D46C7300DE6D7F /* UIColor+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+Additions.m"; path = "../../btctcn-IOS2020/RSTask6/Additions/UIColor+Additions.m"; sourceTree = "<group>"; };
-		20D9AED724D46C7300DE6D7F /* UIColor+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+Additions.h"; path = "../../btctcn-IOS2020/RSTask6/Additions/UIColor+Additions.h"; sourceTree = "<group>"; };
+		20D9AED624D46C7300DE6D7F /* UIColor+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Additions.m"; sourceTree = "<group>"; };
+		20D9AED724D46C7300DE6D7F /* UIColor+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Additions.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,7 +187,6 @@
 				20D9AE8624D45EC000DE6D7F /* Sources */,
 				20D9AE8724D45EC000DE6D7F /* Frameworks */,
 				20D9AE8824D45EC000DE6D7F /* Resources */,
-				20892B5424D49C760028E151 /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -303,27 +302,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		20892B5424D49C760028E151 /* Run Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nexport REVEAL_SERVER_FILENAME=\"RevealServer.framework\"\n\n# Update this path to point to the location of RevealServer.framework in your project.\nexport REVEAL_SERVER_PATH=\"${SRCROOT}/${REVEAL_SERVER_FILENAME}\"\n\n# If configuration is not Debug, skip this script.\n[ \"${CONFIGURATION}\" != \"Debug\" ] && exit 0\n\n# If RevealServer.framework exists at the specified path, run code signing script.\nif [ -d \"${REVEAL_SERVER_PATH}\" ]; then\n  \"${REVEAL_SERVER_PATH}/Scripts/copy_and_codesign_revealserver.sh\"\nelse\n  echo \"Cannot find RevealServer.framework, so Reveal Server will not be started for your app.\"\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		20D9AE8624D45EC000DE6D7F /* Sources */ = {
@@ -501,10 +479,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Q2Q3Q59KE9;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)",
-				);
 				INFOPLIST_FILE = UniversalScanner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -513,8 +487,6 @@
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
-					"-weak_framework",
-					RevealServer,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.btctcn.UniversalScanner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -528,10 +500,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Q2Q3Q59KE9;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)",
-				);
 				INFOPLIST_FILE = UniversalScanner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -540,8 +508,6 @@
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
-					"-weak_framework",
-					RevealServer,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.btctcn.UniversalScanner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
